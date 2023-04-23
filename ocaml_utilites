@@ -1,0 +1,12 @@
+
+let list_to_string lst =
+  String.concat ~sep:"; " lst
+
+let rec loc_to_string_help s loc=
+  match loc with
+    | [] -> s
+    | hd :: tl ->
+       loc_to_string_help (s ^ String.make 1 hd) tl
+
+let loc_to_string  loc =
+loc_to_string_help "" loc 

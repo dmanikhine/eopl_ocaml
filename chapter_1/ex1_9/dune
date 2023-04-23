@@ -1,0 +1,3 @@
+(executable
+ (name      remove_first_v2)
+ (libraries base stdio))
