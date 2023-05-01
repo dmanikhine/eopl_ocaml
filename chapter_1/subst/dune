@@ -1,0 +1,3 @@
+(executable
+ (name      subst)
+ (libraries base stdio))

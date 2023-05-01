@@ -4,59 +4,72 @@ open Base.Poly
 
 
 type lcExp =
-  | Char_lcExp of char 
-  | String_lcExp of string
-
-type loc_lolc=
-{ret_loc: char list;
-ret_lolc: string list;
-}
-  
-let is_symbol exp = 
-  match exp with
-| Char_lcExp(_)   -> true
-| String_lcExp(_) -> false
+  | One of char
+  | Many of lcExp list
+  | LambdaC of char * char
+  | LambdaL of char * lcExp list
 
 
-let explode_lcExp_string s =
+  let reverse l =
+    let rec aux reversed = function
+      | [] -> reversed
+      | Many(x)::tail -> aux (Many(aux [] x)::reversed) tail 
+      | LambdaL(x,expression)::tail -> aux ((LambdaL(x, aux [] expression))::reversed) tail 
+      | head :: tail -> aux (head::reversed) tail in
+    aux [] l
+
+
+let explode_string s =
   let rec exp i lcExp_list =
     if i < 0 then lcExp_list else exp (i - 1) (s.[i] :: lcExp_list) in
-      exp (String.length s - 1) []
+  exp (String.length s - 1) []
 
 
-let rec add_to_list loc lolc = 
-  match loc with 
-  | c_end::tl when c_end=')' ->{ret_loc=tl; ret_lolc=lolc;}
-  | c_begin::tl when c_begin='(' ->
-   let ret= add_to_list tl [] in
-      {ret_loc=ret.ret_loc; ret_lolc=lolc::ret.ret_lolc};
-  |
+  let rec aux = function
+  | [] -> printf ""
+  | One(x)::tail -> printf "%c" x; aux tail
+  | LambdaL(x,expression) :: tail -> printf "\n(lambda (%c) (" x; aux expression; printf "l)"; aux tail
+  | LambdaC(x,symbol) :: tail -> printf "\n(lambda (%c) %c)" x symbol; aux tail
+  | Many(x):: tail -> printf "\n(m"; aux x; printf "m)\n"; aux tail 
 
 
+let rec take_lambda acc = function  
+  | [] -> (acc,[])
+  | _::l::a1::m::b::d::a2::_::_::x::_::_::parentheses_open::tail when (Char.equal l 'l'
+                                        && Char.equal a1 'a'
+                                        && Char.equal m 'm'
+                                        && Char.equal b 'b'
+                                        && Char.equal d 'd'
+                                        && Char.equal a2 'a'
+                                        && Char.equal parentheses_open '('
+                                        ) -> let (racc,rlst)= (take_lambda [] (parentheses_open::tail)) in
+                                                  take_lambda (LambdaL(x,racc)::acc) rlst 
+  | _::l::a1::m::b::d::a2::_::_::x::_::_::s::_::tail when (Char.equal l 'l'
+                                        && Char.equal a1 'a'
+                                        && Char.equal m 'm'
+                                        && Char.equal b 'b'
+                                        && Char.equal d 'd'
+                                        && Char.equal a2 'a') -> take_lambda (LambdaC(x,s)::acc) tail 
+  | parentheses_open :: tail when (Char.equal parentheses_open '(')-> let (racc,rlst)= (take_lambda [] tail) in
+                                                  take_lambda (Many(racc)::acc) rlst 
+  | parentheses_close :: tail when (Char.equal parentheses_close ')')->  (acc, tail)
+  | head::tail -> take_lambda (One(head)::acc) tail
+
+  let rec occurs_free check_var = function
+  | [] -> false
+  | One(x)::_ when (Char.equal x check_var) -> true 
+  | LambdaC(x,one_char)::_ when (not(Char.equal x check_var)) &&(Char.equal one_char check_var) -> true
+  | LambdaL(x,expression)::_ when (not(Char.equal x check_var) && (occurs_free check_var expression)) -> true
+  | Many(expression)::_ when (occurs_free check_var expression) -> true
+  | _::tail -> occurs_free check_var tail
 
 
+let () = 
+  let (racc,_)=(take_lambda [] (explode_string "(lambda (y) (lambda (z) (x (y z))))")) in
+  if(occurs_free 'x' racc) then printf "\n true \n\n"
+  else printf "\n false \n\n";
+  let (racc,_)=(take_lambda [] (explode_string "(lambda (x) (x y))")) in
+  if(occurs_free 'x' racc) then printf "\n true \n\n"
+  else printf "\n false \n\n"
+      
 
-let loc_to_lolc loc lolc =  
-  match loc with
-  | [] -> []
-  | c_begin::tl when c_begin='(' -> add_to_list tl []
-  | c_space::tl when c_space=' ' -> f_help1 tl lolc
-  | c_end::tl when c_end=')' -> f_help1 tl lolc
-  | c_identifier::c_space::tl when c_space=' ' -> f_help1 tl c_identifier::lolc
-
-
-
-
-
-  
-
-
-  
-
-
-
-
-
-let() =
-let predicat= is_symbol (Char_lcExp 'x') in
- printf "%b\n" predicat
