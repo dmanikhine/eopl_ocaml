@@ -1,0 +1,3 @@
+(executable
+ (name      read_lambda_v2)
+ (libraries base stdio))

@@ -1,0 +1,3 @@
+(executable
+ (name      return_tuple)
+ (libraries base stdio))
