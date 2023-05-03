@@ -17,6 +17,14 @@ let rec subst sold snew = function
     else O(x)::(subst sold snew tail)
 | M(los)::tail -> M(subst sold snew los)::(subst sold snew tail)
 
+let rec subst_v3 sold snew = function
+| [] -> []
+| head::tail -> match head with
+                  | O(x)->
+                  if (Char.equal x sold) then
+                  O(snew)::(subst_v3 sold snew tail)
+                  else O(x)::(subst_v3 sold snew tail)
+                  | M(los)->M(subst_v3 sold snew los)::(subst sold snew tail)
 
 
 let rec subst_v2 sold snew = function
@@ -52,4 +60,7 @@ print_nListChar (subst 'a' 'z' v); printf " \n";
 printf "\n";
 print_nListChar v; printf " \n";
 print_nListChar (subst_v2 'a' 'z' v); printf " \n";
+printf "\n";
+print_nListChar v; printf " \n";
+print_nListChar (subst_v3 'a' 'z' v); printf " \n";
 
