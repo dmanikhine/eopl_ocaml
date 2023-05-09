@@ -1,0 +1,3 @@
+(executable
+ (name      ex2_5)
+ (libraries base stdio))
