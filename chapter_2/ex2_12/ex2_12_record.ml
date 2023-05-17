@@ -2,31 +2,23 @@ open Base
 open Stdio
 (* open Base.Poly *)
 
-type f1 =
-|Funit of (unit->unit)
-|Fint of (unit->int)
 
-type f2 =
-|Funit of (unit->unit)
-|Fstk of (unit->rec_stk)
-and
-rec_stk = {
+type rec_stk = {
   status: bool;
-  el_value: (unit->f1);
-  old_stk: f2;
+  el_value: (unit->int option);
+  old_stk: (unit -> rec_stk option)
 }
-
-let push e stk =
+ 
 
 
 let empty_stack =
  {
 status= true;
-el_value= Funit(fun ()-> printf "TOP Stack is empty");
-old_stk = Funit(fun ()-> printf "POP Stack is empty");
+el_value= (fun ()-> printf "TOP Stack is empty"; Some 20);
+old_stk =(fun ()-> printf "TOP Stack is empty"; None);
 } 
 
-let is_empty_stack {status= stk_status;el_value=_; old_stk=_}=
+let is_empty_stack {status= stk_status;el_value=_;}=
 stk_status
 
 
