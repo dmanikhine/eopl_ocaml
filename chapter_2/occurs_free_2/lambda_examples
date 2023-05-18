@@ -1,0 +1,12 @@
+> (occurs-free? ’x ’x)
+#t
+> (occurs-free? ’x ’y)
+#f
+> (occurs-free? ’x ’(lambda (x) (x y)))
+#f
+> (occurs-free? ’x ’(lambda (y) (x y)))
+#t
+> (occurs-free? ’x ’((lambda (x) x) (x y)))
+#t
+> (occurs-free? ’x ’(lambda (y) (lambda (z) (x (y z)))))
+#t
