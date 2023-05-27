@@ -13,3 +13,4 @@ val make_Cons_val : expval -> expval -> expval
 val make_Emptylist_val : expval
 val print_Cons_val : expval -> unit
 val emptylistQ :expval -> expval
+val list_val : expval list ->expval

@@ -1,3 +1,4 @@
+open Base
 open T_expval
 open T_environment
 
@@ -42,6 +43,7 @@ let make_Cons_exp exp1 exp2 = Cons_exp (exp1,exp2)
 let make_Car_exp exp1 = Car_exp exp1
 let make_Cdr_exp exp1 = Cdr_exp exp1
 let make_NullQ_exp exp1 =NullQ_exp exp1
+let make_List_exp lst =List_exp lst
 
 let rec value_of exp env=
 match exp with
@@ -65,4 +67,5 @@ match exp with
 |Car_exp exp1 -> expval_to_car (value_of exp1 env)
 |Cdr_exp exp1 -> expval_to_cdr (value_of exp1 env)
 |NullQ_exp exp1 -> emptylistQ (value_of exp1 env)
-|List_exp
+|List_exp x ->  let aux aux_env aux_val=value_of aux_val aux_env in 
+                list_val (List.map ~f:(aux env) x)

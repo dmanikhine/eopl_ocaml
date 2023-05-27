@@ -10,6 +10,17 @@ type expval=
 let make_Emptylist_val =Emptylist_val
 let make_Cons_val expval1 expval2 = Cons_val (expval1,expval2)
 
+
+let list_val elements =
+  let rec aux func= function
+  |[]-> Emptylist_val
+  |x::t -> func x (aux func t) in 
+  aux make_Cons_val elements
+
+  
+
+  
+
 let rec print_Cons_val  = function
 |Bool_val _ | Num_val _ -> failwith "Error in funciton print_cons_val! Operand is not Cons_val!"
 |Emptylist_val -> printf " emptylist "

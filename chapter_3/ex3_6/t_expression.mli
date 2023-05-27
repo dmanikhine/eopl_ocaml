@@ -21,5 +21,6 @@ val make_Cons_exp: expression->expression->expression
 val make_Car_exp: expression->expression
 val make_Cdr_exp: expression->expression
 val make_NullQ_exp: expression->expression
+val make_List_exp: expression list -> expression
 
 val value_of: expression -> env -> expval
