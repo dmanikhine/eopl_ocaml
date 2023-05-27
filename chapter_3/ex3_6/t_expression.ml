@@ -9,6 +9,7 @@ type expression =
 |Diff_exp of expression * expression
 |Var_exp of char
 |Let_exp of char * expression * expression
+|Minus_exp of expression
 
 let make_Const_exp n = Const_exp n
 let make_ZeroQ_exp exp =ZeroQ_exp exp
@@ -16,6 +17,7 @@ let make_Diff_exp exp1 exp2 = Diff_exp(exp1,exp2)
 let make_Var_exp c =Var_exp c
 let make_If_exp exp1 exp2 exp3 =If_exp(exp1,exp2,exp3)
 let make_Let_exp c exp1 body = Let_exp(c,exp1,body)
+let make_Minus_exp exp=Minus_exp exp
 
 
 
@@ -28,5 +30,6 @@ match exp with
                    else bool_to_expval false
 |If_exp (exp1,exp2,exp3) -> if (expval_to_bool (value_of exp1 env)) then value_of exp2 env
                     else value_of exp3 env
-|Let_exp (var,exp1,body) -> value_of body (make_env var (value_of exp1 env) env)                  
+|Let_exp (var,exp1,body) -> value_of body (make_Extend_env var (value_of exp1 env) env)                  
+|Minus_exp exp1 -> num_to_expval (-(expval_to_num (value_of exp1 env)))
 
