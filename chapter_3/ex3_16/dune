@@ -1,0 +1,4 @@
+(executable
+ (name      main3_16)
+ (libraries base stdio))
+

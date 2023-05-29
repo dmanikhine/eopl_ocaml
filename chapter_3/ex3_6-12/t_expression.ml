@@ -22,7 +22,8 @@ type expression =
 |Car_exp of expression
 |Cdr_exp of expression
 |NullQ_exp of expression
-|List_exp of expression list  
+|List_exp of expression list
+|Cond_exp of (expression * expression) list  
 
 
 let make_Const_exp n = Const_exp n
@@ -44,6 +45,8 @@ let make_Car_exp exp1 = Car_exp exp1
 let make_Cdr_exp exp1 = Cdr_exp exp1
 let make_NullQ_exp exp1 =NullQ_exp exp1
 let make_List_exp lst =List_exp lst
+let make_Cond_exp lst_cond_exp =Cond_exp lst_cond_exp
+
 
 let rec value_of exp env=
 match exp with
@@ -69,3 +72,8 @@ match exp with
 |NullQ_exp exp1 -> emptylistQ (value_of exp1 env)
 |List_exp x ->  let aux aux_env aux_val=value_of aux_val aux_env in 
                 list_val (List.map ~f:(aux env) x)
+|Cond_exp lst_cond_exp -> let rec cond_aux = function
+                              |[] -> failwith "value-of All cond tests failed!"
+                              |(x,y)::t -> if(expval_to_bool(value_of x env)) then value_of y env 
+                              else cond_aux t in 
+                              cond_aux lst_cond_exp

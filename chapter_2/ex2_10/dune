@@ -1,0 +1,4 @@
+(executables
+ (names      main2_10)
+ (libraries base stdio))
+

@@ -1,0 +1,32 @@
+open T_expval
+open T_environment
+
+
+type expression =
+|Const_exp of int
+|ZeroQ_exp of expression
+|If_exp of expression * expression * expression
+|Diff_exp of expression * expression
+|Var_exp of char
+|Let_exp of char * expression * expression
+
+let make_Const_exp n = Const_exp n
+let make_ZeroQ_exp exp =ZeroQ_exp exp
+let make_Diff_exp exp1 exp2 = Diff_exp(exp1,exp2)
+let make_Var_exp c =Var_exp c
+let make_If_exp exp1 exp2 exp3 =If_exp(exp1,exp2,exp3)
+let make_Let_exp c exp1 body = Let_exp(c,exp1,body)
+
+
+
+let rec value_of exp env=
+match exp with
+|Const_exp n -> num_to_expval n
+|Var_exp var -> apply_env env var
+|Diff_exp (exp1, exp2) -> num_to_expval (  (expval_to_num (value_of exp1 env)) - (expval_to_num (value_of exp2 env)))
+|ZeroQ_exp exp1 -> if expval_to_num(value_of exp1 env)=0 then num_to_expval 1
+                   else num_to_expval 0
+|If_exp (exp1,exp2,exp3) -> if (expval_to_num (value_of exp1 env)=1) then value_of exp2 env
+                    else value_of exp3 env
+|Let_exp (var,exp1,body) -> value_of body (make_env var (value_of exp1 env) env)                  
+
